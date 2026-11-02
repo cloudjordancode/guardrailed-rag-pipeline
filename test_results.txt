@@ -1,0 +1,44 @@
+# Guardrailed RAG Pipeline — Test Results
+
+**Model:** llama3.2:1b  
+**Knowledge base:** 60 document chunks  
+**Final distance threshold:** 0.8
+
+### Test 1 — In-scope
+Question: How does FastAPI validate request data?
+
+- Retrieved chunks: 3
+- Best distance: 0.2208
+- Confidence: High
+- Source: fastapi.txt
+- Result: Relevant answer generated successfully.
+
+### Test 2 — Partially in-scope
+Question: How does FastAPI compare to Django for building large enterprise applications?
+
+- Retrieved chunks: 3
+- Best distance: 0.3396
+- Confidence: High
+- Result: Model acknowledged insufficient information for a complete comparison.
+- Observation: High retrieval confidence does not guarantee sufficient context.
+
+### Test 3 — Out-of-scope
+Question: Who won the FIFA World Cup in 1998?
+
+- Original threshold 1.0: Three irrelevant chunks passed filtering.
+- Revised threshold 0.8: Zero chunks retained.
+- Confidence: Low
+- Result: No-context fallback triggered without calling Ollama.
+
+### Test 4 — Ambiguous
+Question: How do I improve its performance?
+
+- Retrieved chunks: 0
+- Confidence: Low
+- Result: No-context fallback triggered without guessing.
+
+## Conclusions
+
+All four required question types were tested. Distance filtering, confidence classification, strengthened system instructions, and structured dictionary responses were implemented.
+
+Limitations observed: Retrieval confidence measures similarity rather than factual correctness. The local model can still generate unsupported details or omit requested citations.
